@@ -1,0 +1,36 @@
+on:
+  workflow_dispatch:
+    inputs:
+      sbt_version:
+        required: true
+        type: string
+        description: SBT version (e.g. 1.8.2)
+      java_version:
+        required: true
+        type: string
+        description: Major Java version (e.g. 17)
+      graalvm_version:
+        required: true
+        type: string
+        description: GraalVM version (e.g. 22.3.0-b2)
+      
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v2
+        - name: Build and push docker image
+          env:
+            IMAGE: ghcr.io/${{github.repository}}:${{github.event.inputs.java_version}}-${{github.event.inputs.graalvm_version}}-${{github.event.inputs.sbt_version}}
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          run: |
+            echo $GITHUB_TOKEN | docker login ghcr.io -u ${{github.repository_owner}} --password-stdin
+            docker build . --file Dockerfile --tag "$IMAGE" \
+              --build-arg sbtVersion=${{github.event.inputs.sbt_version}} \
+              --build-arg javaVersion=${{github.event.inputs.java_version}} \
+              --build-arg graalVmVersion=${{github.event.inputs.graalvm_version}}
+            docker push "$IMAGE"
