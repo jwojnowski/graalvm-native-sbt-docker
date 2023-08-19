@@ -1,4 +1,6 @@
 ARG sbtVersion
+ARG javaVersion
+ARG graalVmVersion
 
 FROM alpine/curl AS sbt-downloader
 ARG sbtVersion
@@ -8,9 +10,7 @@ RUN curl -L https://github.com/sbt/sbt/releases/download/v${sbtVersion}/sbt-${sb
 RUN tar xzf sbt.tgz
 RUN mv sbt/bin/sbt /usr/bin/sbt
 
-ARG javaVersion
-ARG graalVmVersion
-FROM ghcr.io/graalvm/graalvm-ce:ol9-java17-22.3.0-b2
+FROM ghcr.io/graalvm/graalvm-ce:ol9-java${javaVersion}-${graalVmVersion}
 COPY --from=sbt-downloader /usr/bin/sbt /usr/bin/sbt
 RUN chmod u+x /usr/bin/sbt
 RUN echo c | sbt sbtVersion
