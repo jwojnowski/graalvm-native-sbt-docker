@@ -28,6 +28,9 @@ jobs:
             IMAGE: ghcr.io/${{github.repository}}:${{github.event.inputs.java_version}}-${{github.event.inputs.graalvm_version}}-${{github.event.inputs.sbt_version}}
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           run: |
+            echo sbtVersion=${{github.event.inputs.sbt_version}}
+            echo javaVersion=${{github.event.inputs.java_version}}
+            echo graalVmVersion=${{github.event.inputs.graalvm_version}}
             echo $GITHUB_TOKEN | docker login ghcr.io -u ${{github.repository_owner}} --password-stdin
             docker build . --file Dockerfile --tag "$IMAGE" \
               --build-arg sbtVersion=${{github.event.inputs.sbt_version}} \
