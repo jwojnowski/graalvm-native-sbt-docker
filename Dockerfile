@@ -10,7 +10,7 @@ RUN mv sbt/bin/sbt /usr/bin/sbt
 
 ARG javaVersion
 ARG graalVmVersion
-FROM ghcr.io/graalvm/graalvm-ce:ol9-java17-22.3.0-b2
+FROM ghcr.io/graalvm/graalvm-ce:ol9-java${javaVersion}-${graalVmVersion}
 COPY --from=sbt-downloader /usr/bin/sbt /usr/bin/sbt
 RUN chmod u+x /usr/bin/sbt
 RUN echo c | sbt sbtVersion
